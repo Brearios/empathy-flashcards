@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Empathy Flashcards</title>
+<meta name="description" content="Practice saying the empathetic thing in everyday moments.">
+<meta name="theme-color" content="#FBF7F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1C1916" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Empathy">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+  :root {
+    --bg: #FBF7F2;
+    --card: #FFFFFF;
+    --ink: #2B2622;
+    --muted: #7A6F66;
+    --line: #E9E1D8;
+    --accent: #B9572F;
+    --accent-soft: #F6E6DC;
+    --trap: #8A5A12;
+    --trap-bg: #FBF1DE;
+    --shadow: 0 1px 2px rgba(60,40,20,.06), 0 8px 24px rgba(60,40,20,.08);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1C1916;
+      --card: #27231F;
+      --ink: #F2ECE5;
+      --muted: #A89D92;
+      --line: #3A342E;
+      --accent: #E58C63;
+      --accent-soft: #3A2A21;
+      --trap: #E9C27A;
+      --trap-bg: #332A1A;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px 4px;
+    max-width: 640px; width: 100%; margin: 0 auto;
+  }
+  header h1 {
+    font-family: var(--serif);
+    font-size: 1.1rem; font-weight: 600; margin: 0; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    letter-spacing: .01em;
+  }
+  .icon-btn {
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 999px; height: 36px; padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .85rem;
+  }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  .filters {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 8px 16px 10px;
+    max-width: 640px; width: 100%; margin: 0 auto;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none; border: 1px solid var(--line); background: transparent;
+    border-radius: 999px; padding: 6px 12px; font-size: .85rem; color: var(--muted);
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 4px 16px 12px;
+    max-width: 640px; width: 100%; margin: 0 auto;
+    min-height: 0;
+  }
+  .card {
+    flex: 1; background: var(--card); border-radius: 20px; box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 24px 22px; display: flex; flex-direction: column;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    overflow-y: auto; min-height: 0;
+    animation: rise .28s ease-out;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .card, .responses li, .trap { animation: none !important; } }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tag {
+    font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+  }
+  .tag.kind { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+
+  .setup { font-size: 1.05rem; line-height: 1.5; color: var(--muted); margin: 0 0 16px; }
+  .speaker { font-size: .85rem; font-weight: 600; color: var(--muted); margin: 0 0 6px; }
+  .quote {
+    font-family: var(--serif); font-size: 1.55rem; line-height: 1.35; margin: 0;
+    text-wrap: pretty;
+  }
+  .front-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .hint {
+    margin-top: 24px; text-align: center; font-size: .85rem; color: var(--muted);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .hint .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 50% { opacity: .25; } }
+
+  /* Revealed */
+  .recap { border-left: 3px solid var(--line); padding-left: 12px; margin-bottom: 20px; }
+  .recap .speaker { margin-bottom: 2px; }
+  .recap .quote { font-size: 1.1rem; }
+  .responses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+  .responses li { animation: rise .3s ease-out both; }
+  .responses li:nth-child(2) { animation-delay: .06s; }
+  .responses li:nth-child(3) { animation-delay: .12s; }
+  .move {
+    display: block; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 3px;
+  }
+  .say { font-family: var(--serif); font-size: 1.2rem; line-height: 1.4; margin: 0; }
+  .trap {
+    margin-top: 22px; background: var(--trap-bg); border-radius: 12px; padding: 12px 14px;
+    animation: rise .3s ease-out .18s both;
+  }
+  .trap .move { color: var(--trap); }
+  .trap p { margin: 0; font-size: 1rem; line-height: 1.4; }
+  .trap s { text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, var(--trap) 60%, transparent); }
+
+  footer {
+    text-align: center; font-size: .8rem; color: var(--muted);
+    padding: 0 16px 14px;
+  }
+
+  /* Dialogs */
+  dialog {
+    border: none; border-radius: 18px; padding: 0; width: min(560px, calc(100% - 32px));
+    max-height: calc(100dvh - 48px);
+    background: var(--card); color: var(--ink); box-shadow: var(--shadow);
+  }
+  dialog::backdrop { background: rgba(20,14,10,.45); }
+  .dlg { padding: 22px 20px 20px; }
+  .dlg h2 { font-family: var(--serif); margin: 0 0 12px; font-size: 1.35rem; }
+  .dlg h3 { font-size: .8rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 20px 0 8px; }
+  .dlg p, .dlg li { line-height: 1.5; }
+  .dlg ol { padding-left: 1.3em; margin: 0; }
+  .dlg li { margin-bottom: 6px; }
+  .gloss { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; }
+  .gloss dt { font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .gloss dd { margin: 0; color: var(--muted); }
+  .gloss.traps dt { color: var(--trap); }
+  .dlg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .btn {
+    border: none; border-radius: 999px; padding: 10px 18px; font-weight: 600;
+    background: var(--ink); color: var(--bg);
+  }
+  .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .platform { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+  .platform.first { border-color: var(--accent); }
+  .platform h3 { margin-top: 0; }
+  .ico { display: inline-block; vertical-align: -3px; width: 18px; height: 18px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Empathy Flashcards</h1>
+  <button class="icon-btn" id="installBtn" aria-label="Add to home screen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    Install
+  </button>
+  <button class="icon-btn" id="helpBtn" aria-label="How it works">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5h.01"/></svg>
+  </button>
+</header>
+
+<nav class="filters" id="filters" aria-label="Filter by relationship"></nav>
+
+<main>
+  <article class="card" id="card" role="button" tabindex="0" aria-live="polite"></article>
+</main>
+
+<footer id="progress"></footer>
+
+<dialog id="helpDlg">
+  <div class="dlg">
+    <h2>How to practice</h2>
+    <ol>
+      <li>Read the situation.</li>
+      <li><strong>Say your own response out loud</strong> before tapping, even if it feels awkward. That's where the practice happens.</li>
+      <li>Tap to see three good options and one trap to avoid. They're examples, not the only right answers.</li>
+      <li>Tap again for the next card.</li>
+    </ol>
+    <h3>The moves</h3>
+    <dl class="gloss">
+      <dt>Name the feeling</dt><dd>Put a word to what they might be feeling.</dd>
+      <dt>Validate</dt><dd>Let them know their reaction makes sense.</dd>
+      <dt>Reflect back</dt><dd>Say what you heard, in your own words.</dd>
+      <dt>Get curious</dt><dd>Ask an open question and let them lead.</dd>
+      <dt>Be present</dt><dd>Show you're staying. Nothing to fix.</dd>
+      <dt>Offer help</dt><dd>Offer something concrete they can turn down.</dd>
+      <dt>Celebrate</dt><dd>Match their joy and keep it about them.</dd>
+      <dt>Own it</dt><dd>Take responsibility, no excuses.</dd>
+      <dt>Thank them</dt><dd>Appreciate them for telling you, or for what they did.</dd>
+    </dl>
+    <h3>Common traps</h3>
+    <dl class="gloss traps">
+      <dt>Silver lining</dt><dd>"At least…" skips past how they feel.</dd>
+      <dt>Fixing / Advice</dt><dd>Solving before they feel heard.</dd>
+      <dt>Minimizing</dt><dd>Making it smaller than it is to them.</dd>
+      <dt>One-upping</dt><dd>Turning it into a story about you.</dd>
+      <dt>Getting defensive</dt><dd>Protecting yourself instead of listening.</dd>
+      <dt>Yes, but</dt><dd>Agreeing, then taking it back.</dd>
+    </dl>
+    <div class="dlg-actions"><button class="btn" data-close>Got it</button></div>
+  </div>
+</dialog>
+
+<dialog id="installDlg">
+  <div class="dlg">
+    <h2>Add to your home screen</h2>
+    <p style="margin:0;color:var(--muted)">It opens like an app and works offline.</p>
+    <div id="installNow" class="platform first" hidden>
+      <h3>One tap</h3>
+      <button class="btn" id="installPromptBtn">Install now</button>
+    </div>
+    <div class="platform" id="iosSteps">
+      <h3>iPhone &amp; iPad</h3>
+      <ol>
+        <li>Open this page in <strong>Safari</strong>.</li>
+        <li>Tap the <strong>Share</strong> button
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>
+          (bottom of the screen on iPhone, top on iPad).</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+        <li>Tap <strong>Add</strong>.</li>
+      </ol>
+    </div>
+    <div class="platform" id="androidSteps">
+      <h3>Android</h3>
+      <ol>
+        <li>Open this page in <strong>Chrome</strong>.</li>
+        <li>Tap the <strong>⋮</strong> menu in the top-right corner.</li>
+        <li>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</li>
+        <li>Tap <strong>Install</strong> or <strong>Add</strong> to confirm.</li>
+      </ol>
+    </div>
+    <div class="dlg-actions"><button class="btn" data-close>Done</button></div>
+  </div>
+</dialog>
+
+<script src="cards/partner.js"></script>
+<script src="cards/parent.js"></script>
+<script src="cards/kid.js"></script>
+<script src="cards/coworker.js"></script>
+<script src="cards/friend.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
