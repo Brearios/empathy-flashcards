@@ -1,5 +1,5 @@
 // Bump VERSION whenever cards or app files change so phones pick up the update.
-var VERSION = "v1";
+var VERSION = "v2";
 var CACHE = "empathy-flashcards-" + VERSION;
 var FILES = [
   "./",
@@ -11,6 +11,11 @@ var FILES = [
   "cards/kid.js",
   "cards/coworker.js",
   "cards/friend.js",
+  "cards/choice-partner.js",
+  "cards/choice-parent.js",
+  "cards/choice-kid.js",
+  "cards/choice-coworker.js",
+  "cards/choice-friend.js",
   "icons/icon.svg",
   "icons/icon-192.png",
   "icons/icon-512.png",

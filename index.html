@@ -182,6 +182,41 @@
   .platform h3 { margin-top: 0; }
   .ico { display: inline-block; vertical-align: -3px; width: 18px; height: 18px; }
   [hidden] { display: none !important; }
+
+  /* Mode row */
+  .filters.modes { padding-top: 0; }
+  .chip.mode[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Multiple choice */
+  .options { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    width: 100%; text-align: left; border: 1.5px solid var(--line); background: var(--bg);
+    border-radius: 14px; padding: 12px 14px; font-size: 1rem; line-height: 1.4;
+    transition: background .2s, border-color .2s;
+  }
+  .opt:active { transform: scale(.99); }
+  .opt .lbl {
+    display: block; font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .opt .note { display: block; margin-top: 6px; font-size: .88rem; color: var(--muted); line-height: 1.4; }
+  .opt.green  { background: var(--g-bg); border-color: var(--g); }
+  .opt.yellow { background: var(--y-bg); border-color: var(--y); }
+  .opt.red    { background: var(--r-bg); border-color: var(--r); }
+  .opt.green .lbl { color: var(--g); }
+  .opt.yellow .lbl { color: var(--y); }
+  .opt.red .lbl { color: var(--r); }
+  .opt.picked { border-width: 3px; padding: 10.5px 12.5px; }
+  .opt.picked .lbl::after { content: " \00B7  Your pick"; }
+  .verdict { margin: 18px 0 0; font-weight: 600; font-size: 1rem; }
+  .verdict.green { color: var(--g); } .verdict.yellow { color: var(--y); } .verdict.red { color: var(--r); }
+  .choice-front .front-body { justify-content: flex-start; flex: none; }
+  .choice-front .quote { font-size: 1.3rem; }
+  .choice-front .setup { margin-bottom: 12px; }
+  :root { --g: #2E7D4F; --g-bg: #E4F3E9; --y: #8A6500; --y-bg: #FBF2CF; --r: #B23A3A; --r-bg: #FBE4E1; }
+  @media (prefers-color-scheme: dark) {
+    :root { --g: #6FCF97; --g-bg: #1E3327; --y: #E9C46A; --y-bg: #3A3118; --r: #F08A80; --r-bg: #3D2220; }
+  }
 </style>
 </head>
 <body>
@@ -197,6 +232,7 @@
 </header>
 
 <nav class="filters" id="filters" aria-label="Filter by relationship"></nav>
+<nav class="filters modes" id="modes" aria-label="Card type"></nav>
 
 <main>
   <article class="card" id="card" role="button" tabindex="0" aria-live="polite"></article>
@@ -213,6 +249,11 @@
       <li>Tap to see three good options and one trap to avoid. They're examples, not the only right answers.</li>
       <li>Tap again for the next card.</li>
     </ol>
+    <h3>Pick-one cards</h3>
+    <p style="margin:0">Some cards give you four replies. Tap the one you'd say, then see how each would land:
+      <strong style="color:var(--g)">green</strong> is the most empathetic,
+      <strong style="color:var(--y)">yellow</strong> won't hurt but won't help much, and
+      <strong style="color:var(--r)">red</strong> falls into a common trap. Use the buttons under the filters to practice one type or mix both.</p>
     <h3>The moves</h3>
     <dl class="gloss">
       <dt>Name the feeling</dt><dd>Put a word to what they might be feeling.</dd>
@@ -275,6 +316,11 @@
 <script src="cards/kid.js"></script>
 <script src="cards/coworker.js"></script>
 <script src="cards/friend.js"></script>
+<script src="cards/choice-partner.js"></script>
+<script src="cards/choice-parent.js"></script>
+<script src="cards/choice-kid.js"></script>
+<script src="cards/choice-coworker.js"></script>
+<script src="cards/choice-friend.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
